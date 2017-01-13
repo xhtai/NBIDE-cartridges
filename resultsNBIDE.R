@@ -53,3 +53,37 @@ mtext(paste0("N=10692, mean=", sprintf("%.3f", mean(allResults$pValue[allResults
 hist(allResults$pValue[allResults$match == 1], main = "Histogram of p-values for matches", xlab = "p-value", breaks = 50, col = adjustcolor("forestgreen", alpha.f = .85))
 mtext(paste0("N=864, mean=", sprintf("%.3f", mean(allResults$pValue[allResults$match == 1]))), side = 3)
 dev.off()
+
+
+
+############### compare with published
+setwd("/home/xtai/Desktop/data/3_MSUinR/")
+load("/home/xtai/Desktop/updatePackage/comparisonResults/allResults.Rdata")
+
+resultsList <- system("ls ./results/", intern = TRUE) # these are results from published method
+
+# rbind all
+load(paste0("./results/", resultsList[1]))
+MSUresults <- compare
+for (i in 2:(length(resultsList))) {
+    load(paste0("./results/", resultsList[i]))
+    MSUresults <- rbind(MSUresults, compare)
+}
+
+allResults <- cbind(allResults, MSUcorr = MSUresults$corr, MSUtheta = MSUresults$theta)
+
+png(file = "./results/resultsVsPublished.png", width = 600, height = 600)
+par(mar = c(5.1, 5.1, 4.1, 2.1))
+MASS::eqscplot(allResults$MSUcorr, allResults$corr, cex = .3, col = ifelse(allResults$match == 0, "red", "white"), xlab = "Results from Published Methods", ylab = "Ours", main = "CCFmax for all comparisons")
+points(allResults$MSUcorr[allResults$match == 1], allResults$corr[allResults$match == 1], cex = .3, col = "forestgreen")
+abline(a = 0, b = 1, lty = 2)
+abline(lm(allResults$corr[allResults$match == 1] ~ allResults$MSUcorr[allResults$match == 1]))
+legend("topleft", legend = c("True Non-match", "True Match", "Best fit line (true matches)", "45-degree line"), col = c("red", "forestgreen", "black", "black"), lty = c(0, 0, 1, 2), pt.bg = c("red", "forestgreen", NA, NA), pch = c(22, 22, NA, NA))
+dev.off()
+
+# check thetas
+MASS::eqscplot(allResults$MSUtheta, allResults$theta, cex = .3, col = ifelse(allResults$match == 0, "red", "white"), xlab = "Results from Published Methods", ylab = "Ours", main = "CCFmax for all comparisons")
+points(allResults$MSUtheta[allResults$match == 1], allResults$theta[allResults$match == 1], cex = .3, col = "forestgreen")
+
+
+plot(allResults$MSUtheta[allResults$match == 1 & allResults$corr > .12], allResults$theta[allResults$match == 1 & allResults$corr > .12], cex = .3, col = "forestgreen")
