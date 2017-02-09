@@ -70,3 +70,79 @@ imageData <- imageData[, 1:4]
 imageData <- imageData[order(imageData$image), ]
 rownames(imageData) <- NULL
 save(imageData, file = "/home/xtai/Desktop/data/imageData.Rdata")
+
+
+
+
+########## 2-7: add this from '2-4without1and3.R'
+################### without step 1
+library(cartridges)
+library(R.matlab)
+
+fileList <- system("ls /home/xtai/Desktop/research/MSU/NBIDE/Proc/*_reg.mat", intern = TRUE)
+fileList2 <- system("ls /home/xtai/Desktop/research/MSU/NBIDE/Proc/*.mat", intern = TRUE)
+fileList2 <- setdiff(fileList2, fileList)
+
+for (i in 1:length(fileList2)) {
+    cat(i, ", ")
+    tmp <- readMat(fileList2[i])
+    BF <- tmp$T.[13:1931, 337:2255]
+    manualCenteri <- round(tmp$bf.y) - 12
+    manualCenterj <- round(tmp$bf.x) - 336
+    
+    # instead of centerBFprimer, do this
+    centeredBF <- matrix(0, nrow = 1769, ncol = 1769)
+    centeredBF[51:1719, 51:1719] <- BF[(manualCenteri - 834):(manualCenteri + 834), (manualCenterj - 834):(manualCenterj + 834)]
+    
+    # for crop later:
+    primerRows <- which(Matrix::rowSums(centeredBF != 0) > 0)
+    primerCols <- which(Matrix::colSums(centeredBF != 0) > 0)
+    
+    centeredBF[centeredBF == 0] <- NA
+    
+    leveled <- levelBF(centeredBF)
+    tmp <- removeCircular(leveled)
+    cropped <- tmp[primerRows, primerCols]
+    
+    outlierNA <- outlierRejection(cropped)
+    inpainted <- inpaint_nans(outlierNA)
+    
+    nonBF <- is.na(cropped)
+    processed <- gaussianFilter(inpainted, nonBF)
+    
+    save(processed, file =  paste0("/home/xtai/Desktop/research/code/2_February/processedWO1/NBIDE", substr(fileList2[i], start = 59, stop = 61) , ".Rdata"))
+    
+    gc()
+}
+
+
+################### without step 3
+library(cartridges)
+
+fileList <- system("ls /home/xtai/Desktop/research/MSU/NBIDE/Proc/*_reg.mat", intern = TRUE)
+
+for (i in 1:length(fileList)) {
+    cat(i, ", ")
+    primer <- findPrimer(paste0("/home/xtai/Desktop/research/Data/NBIDE/cc/NBIDE R BF ", substr(fileList[i], start = 59, stop = 61), ".png")) # primer is an EBImage image
+    tmp <- findFP(paste0("/home/xtai/Desktop/research/Data/NBIDE/cc/NBIDE R BF ", substr(fileList[i], start = 59, stop = 61), ".png"), primer = primer)
+    
+    # step 2
+    out <- centerBFprimer(tmp, primer)
+    tmp <- levelBF(out$centeredBF)
+    
+    # step 3
+    #tmp <- removeCircular(tmp)
+    
+    # step 4
+    cropped <- cropBorders(tmp, out$centeredPrimer)
+    tmp <- outlierRejection(cropped)
+    tmp <- inpaint_nans(tmp)
+    
+    nonBF <- is.na(cropped)
+    processed <- gaussianFilter(tmp, nonBF)
+    
+    save(processed, file =  paste0("/home/xtai/Desktop/research/code/2_February/processedWO3/NBIDE", substr(fileList[i], start = 59, stop = 61) , ".Rdata"))
+    
+    gc()
+}
+
