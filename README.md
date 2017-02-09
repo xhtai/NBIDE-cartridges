@@ -41,7 +41,7 @@ We also compare our results to the results using different pre-processing steps,
 Presentation
 ------------
 
-[`Presentation_11-29.pdf`](https://github.com/xhtai/NBIDE-cartridges/blob/master/Prersentation_11-29.pdf) are slides presented on 11/29. Note that these results were produced using earlier code where steps 1, 4 and 5 were implemented in MATLAB. The current version has all the steps in R, and the implementations are not identical so there are slight differences in the numerical results. The overall conclusions remain the same.
+[`Presentation_11-29.pdf`](https://github.com/xhtai/NBIDE-cartridges/blob/master/Presentation_11-29.pdf) are slides presented on 11/29. Note that these results were produced using earlier code where steps 1, 4 and 5 were implemented in MATLAB. The current version has all the steps in R, and the implementations are not identical so there are slight differences in the numerical results. The overall conclusions remain the same.
 
 The data used in the slides are available here:
 
