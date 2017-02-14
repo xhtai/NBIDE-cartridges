@@ -49,5 +49,5 @@ The data used in the slides are available here:
 * [Processed data using previously published methods](https://app.box.com/s/o0dguefk95dy6zl3q9ypf08ksjbyl6wo) (manually selecting the breechface marks, steps 2 and 4)
 
 ## Write-up
-Draft [here](https://github.com/xhtai/NBIDE-cartridges/blob/master/cartridge_cases.pdf).
+[Here](https://github.com/xhtai/NBIDE-cartridges/blob/master/ADA_report.pdf).
 

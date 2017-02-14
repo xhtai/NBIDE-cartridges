@@ -51,4 +51,4 @@ The data used in the slides are available here:
 Write-up
 --------
 
-Draft [here](https://github.com/xhtai/NBIDE-cartridges/blob/master/cartridge_cases.pdf).
+[Here](https://github.com/xhtai/NBIDE-cartridges/blob/master/ADA_report.pdf).
